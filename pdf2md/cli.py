@@ -66,12 +66,6 @@ from pdf2md.utils import (
     help="Insert --- between pages",
 )
 @click.option(
-    "--ocr",
-    is_flag=True,
-    default=False,
-    help="Enable OCR fallback for scanned pages",
-)
-@click.option(
     "--max-header-level",
     type=click.IntRange(1, 6),
     default=6,
@@ -101,7 +95,6 @@ def main(
     image_format: str,
     dpi: int,
     page_breaks: bool,
-    ocr: bool,
     max_header_level: int,
     strip_headers_footers: bool,
     verbose: bool,
@@ -141,20 +134,6 @@ def main(
     try:
         # Convert
         result = convert_pdf(input_file, options)
-
-        # OCR fallback
-        if ocr and (not result or not result.strip()):
-            from pdf2md.ocr import check_ocr_available, ocr_pdf
-
-            if check_ocr_available():
-                result = ocr_pdf(input_file, pages=page_list, dpi=dpi)
-            else:
-                click.echo(
-                    "Warning: OCR requested but dependencies "
-                    "not available. "
-                    "Install with: pip install pdf2md[ocr]",
-                    err=True,
-                )
 
         # Post-process
         result = apply_postprocessing(

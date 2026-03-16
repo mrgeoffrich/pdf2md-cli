@@ -15,10 +15,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-ocr = [
-    "pytesseract>=0.3",
-    "pdf2image>=1.16",
-]
 dev = [
     "pytest>=7.0",
     "ruff>=0.4",
