@@ -4,43 +4,29 @@ A CLI tool that converts PDF documents to well-structured Markdown, powered by P
 
 ## Installation
 
-### From source (pip)
+### With uv (recommended)
+
+```bash
+uv tool install git+https://github.com/mrgeoffrich/pdf2md-cli.git
+```
+
+This installs `pdf2md` as an isolated CLI tool. Or run it directly without installing:
+
+```bash
+uvx --from git+https://github.com/mrgeoffrich/pdf2md-cli.git pdf2md input.pdf
+```
+
+### With pip
 
 Requires Python 3.10+.
 
 ```bash
-git clone https://github.com/mrgeoffrich/pdf2md-cli.git
-cd pdf2md-cli
-pip install .
-```
-
-This installs the `pdf2md` command globally. To install in an isolated environment:
-
-```bash
-python3 -m venv ~/.pdf2md-venv
-~/.pdf2md-venv/bin/pip install .
-```
-
-Then either add `~/.pdf2md-venv/bin` to your `PATH` or create an alias:
-
-```bash
-alias pdf2md="~/.pdf2md-venv/bin/pdf2md"
+pip install git+https://github.com/mrgeoffrich/pdf2md-cli.git
 ```
 
 ### Standalone binary (no Python required)
 
-Build a single-file executable with PyInstaller:
-
-```bash
-pip install -e ".[dev]"
-scripts/build.sh
-```
-
-The binary is output to `dist/pdf2md`. Copy it anywhere on your `PATH`:
-
-```bash
-cp dist/pdf2md /usr/local/bin/
-```
+Pre-built binaries for Linux, macOS, and Windows are available on the [releases page](https://github.com/mrgeoffrich/pdf2md-cli/releases).
 
 ## Usage
 
@@ -79,10 +65,8 @@ By default, pdf2md strips running headers, footers, and page numbers. Use `--kee
 ## Development
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
-pytest -v
-ruff check .
-ruff format .
+uv sync --extra dev
+uv run pytest -v
+uv run ruff check .
+uv run ruff format .
 ```
