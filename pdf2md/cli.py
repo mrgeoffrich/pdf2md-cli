@@ -72,10 +72,10 @@ from pdf2md.utils import (
     help="Limit heading depth (1-6)",
 )
 @click.option(
-    "--strip-headers-footers",
+    "--keep-headers-footers",
     is_flag=True,
     default=False,
-    help="Attempt to remove running headers/footers",
+    help="Keep running headers/footers (stripped by default)",
 )
 @click.option(
     "-v",
@@ -96,7 +96,7 @@ def main(
     dpi: int,
     page_breaks: bool,
     max_header_level: int,
-    strip_headers_footers: bool,
+    keep_headers_footers: bool,
     verbose: bool,
 ) -> None:
     """Convert a PDF document to well-structured Markdown."""
@@ -125,6 +125,8 @@ def main(
         dpi=dpi,
         page_separators=page_breaks,
         show_progress=verbose,
+        strip_headers=not keep_headers_footers,
+        strip_footers=not keep_headers_footers,
     )
 
     # Create image directory if needed
@@ -139,7 +141,7 @@ def main(
         result = apply_postprocessing(
             result,
             max_header_level=max_header_level,
-            strip_artifacts=strip_headers_footers,
+            strip_artifacts=not keep_headers_footers,
         )
 
         # Output

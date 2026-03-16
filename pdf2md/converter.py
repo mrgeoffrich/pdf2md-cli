@@ -23,6 +23,8 @@ class ConversionOptions:
     dpi: int = 150
     page_separators: bool = False
     show_progress: bool = False
+    strip_headers: bool = True
+    strip_footers: bool = True
 
 
 def convert_pdf(path: str, options: ConversionOptions) -> str:
@@ -43,6 +45,8 @@ def convert_pdf(path: str, options: ConversionOptions) -> str:
         "dpi": options.dpi,
         "page_separators": options.page_separators,
         "show_progress": options.show_progress,
+        "header": not options.strip_headers,
+        "footer": not options.strip_footers,
     }
 
     if options.pages is not None:

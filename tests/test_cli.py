@@ -70,6 +70,6 @@ class TestCliOptions:
         result = cli_runner.invoke(main, [simple_text_pdf, "-v"])
         assert result.exit_code == 0
 
-    def test_strip_headers_footers(self, cli_runner: CliRunner, simple_text_pdf: str):
-        result = cli_runner.invoke(main, [simple_text_pdf, "--strip-headers-footers"])
+    def test_keep_headers_footers(self, cli_runner: CliRunner, simple_text_pdf: str):
+        result = cli_runner.invoke(main, [simple_text_pdf, "--keep-headers-footers"])
         assert result.exit_code == 0

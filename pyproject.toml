@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 dependencies = [
-    "pymupdf4llm>=0.0.17",
+    "pymupdf4llm>=1.27.0",
     "click>=8.0",
 ]
 

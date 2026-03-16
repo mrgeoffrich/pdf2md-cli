@@ -4,7 +4,10 @@ from pdf2md.postprocess import (
     apply_postprocessing,
     fix_hyphenation,
     limit_header_depth,
+    merge_orphan_lines,
     normalize_blank_lines,
+    normalize_bullets,
+    normalize_ligatures,
     normalize_whitespace,
     strip_page_artifacts,
 )
@@ -74,6 +77,97 @@ class TestStripPageArtifacts:
 
     def test_removes_page_number_with_trailing_space(self):
         assert strip_page_artifacts("text\n42  \nmore") == "text\n\nmore"
+
+
+class TestNormalizeLigatures:
+    def test_replaces_fi_ligature(self):
+        assert normalize_ligatures("of\ufb01ce") == "office"
+
+    def test_replaces_fl_ligature(self):
+        assert normalize_ligatures("\ufb02oor") == "floor"
+
+    def test_replaces_ff_ligature(self):
+        assert normalize_ligatures("e\ufb00ect") == "effect"
+
+    def test_replaces_ffi_ligature(self):
+        assert normalize_ligatures("o\ufb03ce") == "office"
+
+    def test_replaces_ffl_ligature(self):
+        assert normalize_ligatures("ba\ufb04e") == "baffle"
+
+    def test_no_ligatures_unchanged(self):
+        assert normalize_ligatures("normal text") == "normal text"
+
+
+class TestNormalizeBullets:
+    def test_normalizes_bullet_char(self):
+        assert normalize_bullets("• Item one") == "- Item one"
+
+    def test_normalizes_triangle_bullet(self):
+        assert normalize_bullets("‣ Item one") == "- Item one"
+
+    def test_normalizes_em_dash_bullet(self):
+        assert normalize_bullets("— Item one") == "- Item one"
+
+    def test_normalizes_en_dash_bullet(self):
+        assert normalize_bullets("– Item one") == "- Item one"
+
+    def test_preserves_standard_markdown_list(self):
+        assert normalize_bullets("- Item one") == "- Item one"
+
+    def test_preserves_inline_bullet(self):
+        assert normalize_bullets("text with • in middle") == "text with • in middle"
+
+    def test_normalizes_indented_bullet(self):
+        assert normalize_bullets("  • Nested item") == "- Nested item"
+
+    def test_multiple_bullets(self):
+        text = "• First\n• Second\n• Third"
+        expected = "- First\n- Second\n- Third"
+        assert normalize_bullets(text) == expected
+
+
+class TestMergeOrphanLines:
+    def test_merges_short_line_continuing_sentence(self):
+        text = "This is a short\nline that continues"
+        assert merge_orphan_lines(text) == "This is a short line that continues"
+
+    def test_preserves_line_ending_with_period(self):
+        text = "This ends with a period.\nNew sentence here"
+        assert merge_orphan_lines(text) == text
+
+    def test_preserves_line_ending_with_colon(self):
+        text = "Items below:\nfirst item"
+        assert merge_orphan_lines(text) == text
+
+    def test_preserves_headings(self):
+        text = "# Heading\ncontinuation"
+        assert merge_orphan_lines(text) == text
+
+    def test_preserves_list_items(self):
+        text = "- List item\ncontinuation"
+        assert merge_orphan_lines(text) == text
+
+    def test_preserves_blank_lines(self):
+        text = "Paragraph one\n\nParagraph two"
+        assert merge_orphan_lines(text) == text
+
+    def test_no_merge_when_next_starts_uppercase(self):
+        text = "Short line\nNew sentence starts"
+        assert merge_orphan_lines(text) == text
+
+    def test_no_merge_long_lines(self):
+        long = "x" * 80
+        text = f"{long}\ncontinuation"
+        assert merge_orphan_lines(text) == text
+
+    def test_preserves_table_rows(self):
+        text = "| cell |\ncontinuation"
+        assert merge_orphan_lines(text) == text
+
+    def test_preserves_hr(self):
+        text = "---\ncontinuation"
+        assert merge_orphan_lines(text) == text
 
 
 class TestNormalizeWhitespace:
