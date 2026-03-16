@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: pdf2md-linux-x86_64
+          - os: macos-latest
+            artifact: pdf2md-macos-arm64
+          - os: windows-latest
+            artifact: pdf2md-windows-x86_64.exe
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Build binary
+        run: |
+          pyinstaller \
+            --onefile \
+            --name pdf2md \
+            --collect-all pymupdf \
+            --hidden-import pymupdf4llm \
+            --exclude-module pytesseract \
+            --exclude-module pdf2image \
+            --exclude-module tkinter \
+            pdf2md/__main__.py
+        shell: bash
+
+      - name: Smoke test (Unix)
+        if: runner.os != 'Windows'
+        run: ./dist/pdf2md --version
+
+      - name: Smoke test (Windows)
+        if: runner.os == 'Windows'
+        run: dist\pdf2md.exe --version
+
+      - name: Rename artifact
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            mv dist/pdf2md.exe dist/${{ matrix.artifact }}
+          else
+            mv dist/pdf2md dist/${{ matrix.artifact }}
+          fi
+        shell: bash
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist/${{ matrix.artifact }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          generate_release_notes: true
