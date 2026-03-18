@@ -1,10 +1,10 @@
 # pdf2md
 
+Convert PDFs to clean, structured Markdown in one command. Built for the AI age, where feeding documents to LLMs means getting them out of PDF and into a format models can actually work with.
+
 [![CI](https://github.com/mrgeoffrich/pdf2md-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/mrgeoffrich/pdf2md-cli/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
-
-A CLI tool that converts PDF documents to well-structured Markdown, powered by PyMuPDF4LLM.
 
 ## Installation
 
