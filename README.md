@@ -1,5 +1,9 @@
 # pdf2md
 
+[![CI](https://github.com/mrgeoffrich/pdf2md-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/mrgeoffrich/pdf2md-cli/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+
 A CLI tool that converts PDF documents to well-structured Markdown, powered by PyMuPDF4LLM.
 
 ## Installation
@@ -70,3 +74,11 @@ uv run pytest -v
 uv run ruff check .
 uv run ruff format .
 ```
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).

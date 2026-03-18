@@ -30,6 +30,9 @@ Thumbs.db
 # pytest
 .pytest_cache/
 
+# Claude Code
+.claude/
+
 # Project-specific
 images/
 tests/fixtures/*.pdf
