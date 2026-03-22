@@ -36,3 +36,10 @@ scripts/build.sh       # pyinstaller binary build
 - Exact match for postprocess tests (we control the input)
 - Test PDFs generated at runtime via PyMuPDF Story API (no binaries in git)
 - Click `CliRunner` for CLI integration tests
+
+## Fixing GitHub Issues
+
+1. Create a fix branch from `main`
+2. Make the changes
+3. Run build (`scripts/build.sh`) and tests (`pytest -v`)
+4. Open a PR on that branch
