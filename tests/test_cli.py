@@ -73,3 +73,17 @@ class TestCliOptions:
     def test_keep_headers_footers(self, cli_runner: CliRunner, simple_text_pdf: str):
         result = cli_runner.invoke(main, [simple_text_pdf, "--keep-headers-footers"])
         assert result.exit_code == 0
+
+    def test_image_dir_with_spaces(
+        self, cli_runner: CliRunner, with_image_pdf: str, tmp_path
+    ):
+        """Regression: --image-dir with spaces should not fail (GH-1)."""
+        image_dir = str(tmp_path / "path with spaces" / "imgs")
+        output_file = str(tmp_path / "out.md")
+        result = cli_runner.invoke(
+            main,
+            [with_image_pdf, "--images", "--image-dir", image_dir, "-o", output_file],
+        )
+        assert result.exit_code == 0, result.output
+        written = list(Path(image_dir).glob("*.png"))
+        assert len(written) > 0
