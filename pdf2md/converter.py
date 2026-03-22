@@ -87,7 +87,11 @@ def convert_pdf(path: str, options: ConversionOptions) -> str:
         raise Pdf2mdError("Unexpected output type from pymupdf4llm")
 
     if temp_image_dir:
-        result = _relocate_images(temp_image_dir, real_image_path, result)
+        try:
+            result = _relocate_images(temp_image_dir, real_image_path, result)
+        except Exception:
+            shutil.rmtree(temp_image_dir, ignore_errors=True)
+            raise
 
     return result
 
@@ -106,17 +110,11 @@ def _relocate_images(src_dir: str, dst_dir: str, markdown: str) -> str:
         if item.is_file():
             shutil.move(str(item), str(dst / item.name))
 
-    # pymupdf4llm emits relative posix paths in the markdown — replace the
+    # pymupdf4llm emits absolute posix paths in the markdown — replace the
     # temp dir prefix with the real destination so image links resolve.
-    try:
-        cwd = Path.cwd()
-        src_rel = src.resolve().relative_to(cwd).as_posix()
-        dst_rel = dst.resolve().relative_to(cwd).as_posix()
-    except ValueError:
-        src_rel = src.resolve().as_posix()
-        dst_rel = dst.resolve().as_posix()
-
-    markdown = markdown.replace(src_rel, dst_rel)
+    src_abs = src.resolve().as_posix()
+    dst_abs = dst.resolve().as_posix()
+    markdown = markdown.replace(src_abs, dst_abs)
 
     shutil.rmtree(src_dir, ignore_errors=True)
     return markdown
