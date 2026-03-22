@@ -98,12 +98,32 @@ def generate_with_lists() -> None:
     _write_story_pdf(html, FIXTURES_DIR / "with_lists.pdf")
 
 
+def generate_with_image() -> None:
+    """Generate a PDF containing an embedded image."""
+    output = FIXTURES_DIR / "with_image.pdf"
+    doc = pymupdf.open()
+    page = doc.new_page(width=612, height=792)
+
+    # Create a colored pixmap (RGBA: 4 components for alpha=1)
+    rect = pymupdf.Rect(100, 200, 300, 400)
+    pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(rect), 1)
+    pix.set_rect(pymupdf.IRect(rect), (255, 0, 0, 255))
+    page.insert_image(rect, pixmap=pix)
+
+    # Add some text
+    page.insert_text((100, 100), "Document With Image", fontsize=20)
+
+    doc.save(str(output))
+    doc.close()
+
+
 def generate_all() -> None:
     """Generate all test PDF fixtures."""
     generate_simple_text()
     generate_with_tables()
     generate_multi_page()
     generate_with_lists()
+    generate_with_image()
 
 
 if __name__ == "__main__":

@@ -37,5 +37,10 @@ def with_lists_pdf() -> str:
 
 
 @pytest.fixture
+def with_image_pdf() -> str:
+    return str(FIXTURES_DIR / "with_image.pdf")
+
+
+@pytest.fixture
 def cli_runner() -> CliRunner:
     return CliRunner()
