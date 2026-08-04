@@ -16,7 +16,7 @@ from pdf2md.utils import (
 )
 
 
-@click.command()
+@click.command(no_args_is_help=True)
 @click.argument("input_file", type=click.Path(exists=True, dir_okay=False))
 @click.option(
     "-o",
@@ -99,7 +99,23 @@ def main(
     keep_headers_footers: bool,
     verbose: bool,
 ) -> None:
-    """Convert a PDF document to well-structured Markdown."""
+    """Convert a PDF document to well-structured Markdown.
+
+    Extracts text, headings, lists, tables and (optionally) images from
+    INPUT_FILE and writes GitHub-flavored Markdown to stdout, or to a file
+    with -o. Running headers and footers are stripped by default, hyphenated
+    line breaks are rejoined, and heading depth can be capped so the output
+    slots cleanly into existing docs.
+
+    \b
+    Examples:
+      pdf2md report.pdf                          # print Markdown to stdout
+      pdf2md report.pdf -o report.md             # write to a file
+      pdf2md report.pdf -p 1-5,12                # convert selected pages
+      pdf2md report.pdf --images --image-dir img # extract images to ./img
+      pdf2md report.pdf --embed-images           # inline images as base64
+      pdf2md report.pdf --page-breaks            # separate pages with ---
+    """
     setup_logging(verbose)
 
     # Validate mutual exclusivity

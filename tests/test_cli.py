@@ -31,6 +31,14 @@ class TestCliBasic:
         assert result.exit_code == 0
         assert "Convert a PDF document" in result.output
 
+    def test_no_args_shows_help(self, cli_runner: CliRunner):
+        # click exits 0 (<=8.1) or 2 (>=8.2) for no_args_is_help; both print help
+        result = cli_runner.invoke(main, [])
+        assert result.exit_code in (0, 2)
+        assert "Convert a PDF document" in result.output
+        assert "Examples:" in result.output
+        assert "--embed-images" in result.output
+
 
 class TestCliErrors:
     def test_nonexistent_file(self, cli_runner: CliRunner):
